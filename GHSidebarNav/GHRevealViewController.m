@@ -37,6 +37,13 @@ const CGFloat kGHRevealSidebarFlickVelocity = 1000.0f;
 @synthesize contentViewController;
 @synthesize searchView;
 
+- (id)init {
+    if (self = [super init]) {
+        
+    }
+    return self;
+}
+
 - (void)setSidebarViewController:(UIViewController *)svc {
 	if (sidebarViewController == nil) {
 		svc.view.frame = _sidebarView.bounds;
@@ -94,30 +101,39 @@ const CGFloat kGHRevealSidebarFlickVelocity = 1000.0f;
 #pragma mark Memory Management
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-		self.sidebarShowing = NO;
-		self.searching = NO;
-		_tapRecog = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideSidebar)];
-		_tapRecog.cancelsTouchesInView = YES;
-		
-		self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-		
-		_sidebarView = [[UIView alloc] initWithFrame:self.view.bounds];
-		_sidebarView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-		_sidebarView.backgroundColor = [UIColor clearColor];
-		[self.view addSubview:_sidebarView];
-		
-		_contentView = [[UIView alloc] initWithFrame:self.view.bounds];
-		_contentView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-		_contentView.backgroundColor = [UIColor clearColor];
-		_contentView.layer.masksToBounds = NO;
-		_contentView.layer.shadowColor = [UIColor blackColor].CGColor;
-		_contentView.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-		_contentView.layer.shadowOpacity = 1.0f;
-		_contentView.layer.shadowRadius = 2.5f;
-		_contentView.layer.shadowPath = [UIBezierPath bezierPathWithRect:_contentView.bounds].CGPath;
-		[self.view addSubview:_contentView];
+        [self setup];
     }
     return self;
+}
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    [self setup];
+}
+
+- (void)setup {
+    self.sidebarShowing = NO;
+    self.searching = NO;
+    _tapRecog = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideSidebar)];
+    _tapRecog.cancelsTouchesInView = YES;
+    
+    self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    
+    _sidebarView = [[UIView alloc] initWithFrame:self.view.bounds];
+    _sidebarView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    _sidebarView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:_sidebarView];
+    
+    _contentView = [[UIView alloc] initWithFrame:self.view.bounds];
+    _contentView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    _contentView.backgroundColor = [UIColor clearColor];
+    _contentView.layer.masksToBounds = NO;
+    _contentView.layer.shadowColor = [UIColor blackColor].CGColor;
+    _contentView.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
+    _contentView.layer.shadowOpacity = 1.0f;
+    _contentView.layer.shadowRadius = 2.5f;
+    _contentView.layer.shadowPath = [UIBezierPath bezierPathWithRect:_contentView.bounds].CGPath;
+    [self.view addSubview:_contentView];
 }
 
 #pragma mark UIViewController
