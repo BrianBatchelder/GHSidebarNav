@@ -9,6 +9,8 @@
 
 extern NSString const *kSidebarCellTextKey;
 extern NSString const *kSidebarCellImageKey;
+extern NSString const *kSidebarCellSelectedBackgroundViewKey;
+extern NSString const *kSidebarCellHighlightedTextColorKey;
 
 @interface GHMenuCell : UITableViewCell
 

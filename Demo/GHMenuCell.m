@@ -12,6 +12,8 @@
 #pragma mark Constants
 NSString const *kSidebarCellTextKey = @"CellText";
 NSString const *kSidebarCellImageKey = @"CellImage";
+NSString const *kSidebarCellSelectedBackgroundViewKey = @"CellSelectedBackgroundView";
+NSString const *kSidebarCellHighlightedTextColorKey = @"CellHighlightedTextColor";
 
 #pragma mark -
 #pragma mark Implementation

@@ -67,6 +67,12 @@
 
 - (void)showControllerInSection:(NSInteger)section atRow:(NSInteger)row {
     _sidebarVC.contentViewController = _controllers[section][row];
+    
+    // show corresponding menu cell as "selected"
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+    [_menuTableView reloadData];    // HACK to get the cell's background color to show it is selected
+    [_menuTableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+    [_menuTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
 }
 
 
@@ -88,6 +94,12 @@
 	NSDictionary *info = _cellInfos[indexPath.section][indexPath.row];
 	cell.textLabel.text = info[kSidebarCellTextKey];
 	cell.imageView.image = info[kSidebarCellImageKey];
+    if (info[kSidebarCellSelectedBackgroundViewKey]) {
+        cell.selectedBackgroundView = info[kSidebarCellSelectedBackgroundViewKey];
+    }
+    if (info[kSidebarCellHighlightedTextColorKey]) {
+        cell.textLabel.highlightedTextColor = info[kSidebarCellHighlightedTextColorKey];
+    }
     return cell;
 }
 
