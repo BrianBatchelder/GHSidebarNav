@@ -65,6 +65,11 @@
 		: YES;
 }
 
+- (void)showControllerInSection:(NSInteger)section atRow:(NSInteger)row {
+    _sidebarVC.contentViewController = _controllers[section][row];
+}
+
+
 #pragma mark UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return _headers.count;

@@ -29,4 +29,6 @@
 					animated:(BOOL)animated 
 			  scrollPosition:(UITableViewScrollPosition)scrollPosition;
 
+- (void)showControllerInSection:(NSInteger)section atRow:(NSInteger)row;
+
 @end
