@@ -19,11 +19,18 @@
 	NSArray *_cellInfos;
 }
 
-- (id)initWithSidebarViewController:(GHRevealViewController *)sidebarVC 
+- (id)initWithSidebarViewController:(GHRevealViewController *)sidebarVC
+					  withSearchBar:(UISearchBar *)searchBar
+						withHeaders:(NSArray *)headers
+					withControllers:(NSArray *)controllers
+					  withCellInfos:(NSArray *)cellInfos;
+
+- (id)initWithSidebarViewController:(GHRevealViewController *)sidebarVC
 					  withSearchBar:(UISearchBar *)searchBar 
 						withHeaders:(NSArray *)headers 
 					withControllers:(NSArray *)controllers 
-					  withCellInfos:(NSArray *)cellInfos;
+					  withCellInfos:(NSArray *)cellInfos
+          showControllerAtIndexPath:(NSIndexPath *) indexPath;
 
 - (void)selectRowAtIndexPath:(NSIndexPath *)indexPath 
 					animated:(BOOL)animated 

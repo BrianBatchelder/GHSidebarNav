@@ -11,26 +11,52 @@
 #import "GHRevealViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
+@interface GHMenuViewController()
+@property (nonatomic,retain) NSIndexPath *startControllerIndexPath;
+@end
 
 #pragma mark -
 #pragma mark Implementation
 @implementation GHMenuViewController
 
+@synthesize startControllerIndexPath = _startControllerIndexPath;
+
 #pragma mark Memory Management
+- (id)initWithSidebarViewController:(GHRevealViewController *)sidebarVC
+					  withSearchBar:(UISearchBar *)searchBar
+						withHeaders:(NSArray *)headers
+					withControllers:(NSArray *)controllers
+					  withCellInfos:(NSArray *)cellInfos
+{    
+    return [self initWithSidebarViewController:sidebarVC
+                                 withSearchBar:searchBar
+                                   withHeaders:headers
+                               withControllers:controllers
+                                 withCellInfos:cellInfos
+                     showControllerAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+}
+
 - (id)initWithSidebarViewController:(GHRevealViewController *)sidebarVC 
 					  withSearchBar:(UISearchBar *)searchBar 
 						withHeaders:(NSArray *)headers 
 					withControllers:(NSArray *)controllers 
-					  withCellInfos:(NSArray *)cellInfos {
+					  withCellInfos:(NSArray *)cellInfos
+          showControllerAtIndexPath:(NSIndexPath *) indexPath {
 	if (self = [super initWithNibName:nil bundle:nil]) {
 		_sidebarVC = sidebarVC;
 		_searchBar = searchBar;
 		_headers = headers;
 		_controllers = controllers;
 		_cellInfos = cellInfos;
+        if (indexPath) {
+            _startControllerIndexPath = indexPath;
+        } else {
+            _startControllerIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        }
 		
 		_sidebarVC.sidebarViewController = self;
-		_sidebarVC.contentViewController = _controllers[0][0];
+        
+		_sidebarVC.contentViewController = _controllers[_startControllerIndexPath.section][_startControllerIndexPath.row];
 	}
 	return self;
 }
@@ -54,9 +80,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    NSLog(@"GHMenuViewController::viewWillAppear");
 	self.view.frame = CGRectMake(0.0f, 0.0f,kGHRevealSidebarWidth, CGRectGetHeight(self.view.bounds));
 	[_searchBar sizeToFit];
-	[self selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UITableViewScrollPositionTop];
+	[self selectRowAtIndexPath:[NSIndexPath indexPathForRow:_startControllerIndexPath.row inSection:_startControllerIndexPath.section] animated:NO scrollPosition:UITableViewScrollPositionTop];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)orientation {
@@ -66,13 +93,8 @@
 }
 
 - (void)showControllerInSection:(NSInteger)section atRow:(NSInteger)row {
-    _sidebarVC.contentViewController = _controllers[section][row];
-    
-    // show corresponding menu cell as "selected"
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
-    [_menuTableView reloadData];    // HACK to get the cell's background color to show it is selected
-    [_menuTableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
-    [_menuTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
+    NSLog(@"GHMenuViewController::showControllerInSection");
+    [self selectRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section] animated:NO scrollPosition:UITableViewScrollPositionTop];
 }
 
 
@@ -142,12 +164,14 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"GHMenuViewController::didSelectRowAtIndexPath");
 	_sidebarVC.contentViewController = _controllers[indexPath.section][indexPath.row];
 	[_sidebarVC toggleSidebar:NO duration:kGHRevealSidebarDefaultAnimationDuration];
 }
 
 #pragma mark Public Methods
 - (void)selectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition {
+    NSLog(@"GHMenuViewController::selectedRowAtIndexPath");
 	[_menuTableView selectRowAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
 	if (scrollPosition == UITableViewScrollPositionNone) {
 		[_menuTableView scrollToRowAtIndexPath:indexPath atScrollPosition:scrollPosition animated:animated];
