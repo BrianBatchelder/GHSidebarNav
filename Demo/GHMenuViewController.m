@@ -12,14 +12,14 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface GHMenuViewController()
-@property (nonatomic,retain) NSIndexPath *startControllerIndexPath;
+@property (nonatomic,retain) NSIndexPath *selectedControllerIndexPath;
 @end
 
 #pragma mark -
 #pragma mark Implementation
 @implementation GHMenuViewController
 
-@synthesize startControllerIndexPath = _startControllerIndexPath;
+@synthesize selectedControllerIndexPath = _selectedControllerIndexPath;
 
 #pragma mark Memory Management
 - (id)initWithSidebarViewController:(GHRevealViewController *)sidebarVC
@@ -49,14 +49,14 @@
 		_controllers = controllers;
 		_cellInfos = cellInfos;
         if (indexPath) {
-            _startControllerIndexPath = indexPath;
+            _selectedControllerIndexPath = indexPath;
         } else {
-            _startControllerIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+            _selectedControllerIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         }
 		
 		_sidebarVC.sidebarViewController = self;
         
-		_sidebarVC.contentViewController = _controllers[_startControllerIndexPath.section][_startControllerIndexPath.row];
+		_sidebarVC.contentViewController = _controllers[_selectedControllerIndexPath.section][_selectedControllerIndexPath.row];
 	}
 	return self;
 }
@@ -82,7 +82,7 @@
 - (void)viewWillAppear:(BOOL)animated {
 	self.view.frame = CGRectMake(0.0f, 0.0f,kGHRevealSidebarWidth, CGRectGetHeight(self.view.bounds));
 	[_searchBar sizeToFit];
-	[self selectRowAtIndexPath:[NSIndexPath indexPathForRow:_startControllerIndexPath.row inSection:_startControllerIndexPath.section] animated:NO scrollPosition:UITableViewScrollPositionTop];
+	[self selectRowAtIndexPath:[NSIndexPath indexPathForRow:_selectedControllerIndexPath.row inSection:_selectedControllerIndexPath.section] animated:NO scrollPosition:UITableViewScrollPositionTop];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)orientation {
@@ -107,19 +107,19 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"GHMenuCell";
+	NSDictionary *info = _cellInfos[indexPath.section][indexPath.row];
     GHMenuCell *cell = (GHMenuCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[GHMenuCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        if (info[kSidebarCellSelectedBackgroundViewKey]) {
+            cell.selectedBackgroundView = info[kSidebarCellSelectedBackgroundViewKey];
+        }
+        if (info[kSidebarCellHighlightedTextColorKey]) {
+            cell.textLabel.highlightedTextColor = info[kSidebarCellHighlightedTextColorKey];
+        }
     }
-	NSDictionary *info = _cellInfos[indexPath.section][indexPath.row];
 	cell.textLabel.text = info[kSidebarCellTextKey];
 	cell.imageView.image = info[kSidebarCellImageKey];
-    if (info[kSidebarCellSelectedBackgroundViewKey]) {
-        cell.selectedBackgroundView = info[kSidebarCellSelectedBackgroundViewKey];
-    }
-    if (info[kSidebarCellHighlightedTextColorKey]) {
-        cell.textLabel.highlightedTextColor = info[kSidebarCellHighlightedTextColorKey];
-    }
     return cell;
 }
 
@@ -162,19 +162,32 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"GHMenuViewController::didSelectRowAtIndexPath");
+    _selectedControllerIndexPath = indexPath;
 	_sidebarVC.contentViewController = _controllers[indexPath.section][indexPath.row];
 	[_sidebarVC toggleSidebar:NO duration:kGHRevealSidebarDefaultAnimationDuration];
 }
 
 #pragma mark Public Methods
 - (void)selectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition {
-    NSLog(@"GHMenuViewController::selectedRowAtIndexPath");
-	[_menuTableView selectRowAtIndexPath:indexPath animated:animated scrollPosition:scrollPosition];
 	if (scrollPosition == UITableViewScrollPositionNone) {
 		[_menuTableView scrollToRowAtIndexPath:indexPath atScrollPosition:scrollPosition animated:animated];
 	}
-	_sidebarVC.contentViewController = _controllers[indexPath.section][indexPath.row];
+    NSDictionary *selectorDictionary = @{
+        @"indexPath":indexPath,
+        @"animated":[NSNumber numberWithBool:animated],
+        @"scrollPosition":[NSNumber numberWithInt:scrollPosition],
+    };
+    [self performSelector:@selector(forceSelectedBackgroundViewForCell:) withObject:selectorDictionary afterDelay:0.0];
+}
+
+// HACK to get the cell's background color to show it is selected
+- (void)forceSelectedBackgroundViewForCell:(NSDictionary *)selectorDictionary {
+    NSIndexPath *indexPath = selectorDictionary[@"indexPath"];
+	[_menuTableView selectRowAtIndexPath:indexPath
+                                animated:[selectorDictionary[@"animated"] boolValue]
+                          scrollPosition:[selectorDictionary[@"scrollPosition"] intValue]];
+    [self tableView:_menuTableView didSelectRowAtIndexPath:selectorDictionary[@"indexPath"]];
+    _sidebarVC.contentViewController = _controllers[indexPath.section][indexPath.row];
 }
 
 @end
