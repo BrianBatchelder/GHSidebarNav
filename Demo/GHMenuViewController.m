@@ -80,7 +80,6 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    NSLog(@"GHMenuViewController::viewWillAppear");
 	self.view.frame = CGRectMake(0.0f, 0.0f,kGHRevealSidebarWidth, CGRectGetHeight(self.view.bounds));
 	[_searchBar sizeToFit];
 	[self selectRowAtIndexPath:[NSIndexPath indexPathForRow:_startControllerIndexPath.row inSection:_startControllerIndexPath.section] animated:NO scrollPosition:UITableViewScrollPositionTop];
@@ -93,7 +92,6 @@
 }
 
 - (void)showControllerInSection:(NSInteger)section atRow:(NSInteger)row {
-    NSLog(@"GHMenuViewController::showControllerInSection");
     [self selectRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:section] animated:NO scrollPosition:UITableViewScrollPositionTop];
 }
 
