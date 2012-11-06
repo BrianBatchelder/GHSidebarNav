@@ -187,7 +187,6 @@
                                 animated:[selectorDictionary[@"animated"] boolValue]
                           scrollPosition:[selectorDictionary[@"scrollPosition"] intValue]];
     [self tableView:_menuTableView didSelectRowAtIndexPath:selectorDictionary[@"indexPath"]];
-    _sidebarVC.contentViewController = _controllers[indexPath.section][indexPath.row];
 }
 
 @end
