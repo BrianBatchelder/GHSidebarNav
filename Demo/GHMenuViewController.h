@@ -38,4 +38,7 @@
 
 - (void)showControllerInSection:(NSInteger)section atRow:(NSInteger)row;
 
+- (UIViewController *)controllerForIndexPath:(NSIndexPath *)indexPath;
+
+
 @end

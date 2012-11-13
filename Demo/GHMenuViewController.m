@@ -56,7 +56,7 @@
 		
 		_sidebarVC.sidebarViewController = self;
         
-		_sidebarVC.contentViewController = _controllers[_selectedControllerIndexPath.section][_selectedControllerIndexPath.row];
+		_sidebarVC.contentViewController = [self controllerForIndexPath:_selectedControllerIndexPath];
 	}
 	return self;
 }
@@ -163,7 +163,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     _selectedControllerIndexPath = indexPath;
-	_sidebarVC.contentViewController = _controllers[indexPath.section][indexPath.row];
+	_sidebarVC.contentViewController = [self controllerForIndexPath:indexPath];
 	[_sidebarVC toggleSidebar:NO duration:kGHRevealSidebarDefaultAnimationDuration];
 }
 
@@ -187,6 +187,10 @@
                                 animated:[selectorDictionary[@"animated"] boolValue]
                           scrollPosition:[selectorDictionary[@"scrollPosition"] intValue]];
     [self tableView:_menuTableView didSelectRowAtIndexPath:selectorDictionary[@"indexPath"]];
+}
+
+- (UIViewController *)controllerForIndexPath:(NSIndexPath *)indexPath {
+    return _controllers[indexPath.section][indexPath.row];
 }
 
 @end
