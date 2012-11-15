@@ -67,9 +67,13 @@
 	self.view.frame = CGRectMake(0.0f, 0.0f, kGHRevealSidebarWidth, CGRectGetHeight(self.view.bounds));
 	self.view.autoresizingMask = UIViewAutoresizingFlexibleHeight;
 	
-	[self.view addSubview:_searchBar];
+    CGFloat yOffset = 0.0f;
+    if (_searchBar) {
+        [self.view addSubview:_searchBar];
+        yOffset += 44.0f;
+    }
 	
-	_menuTableView = [[UITableView alloc] initWithFrame:CGRectMake(0.0f, 44.0f, kGHRevealSidebarWidth, CGRectGetHeight(self.view.bounds) - 44.0f) 
+	_menuTableView = [[UITableView alloc] initWithFrame:CGRectMake(0.0f, yOffset, kGHRevealSidebarWidth, CGRectGetHeight(self.view.bounds) - yOffset)
 												  style:UITableViewStylePlain];
 	_menuTableView.delegate = self;
 	_menuTableView.dataSource = self;
