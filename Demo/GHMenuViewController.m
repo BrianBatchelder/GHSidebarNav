@@ -17,7 +17,14 @@
 
 #pragma mark -
 #pragma mark Implementation
-@implementation GHMenuViewController
+@implementation GHMenuViewController {
+	GHRevealViewController *_sidebarVC;
+	UISearchBar *_searchBar;
+	UITableView *_menuTableView;
+	NSArray *_headers;
+	NSArray *_controllers;
+	NSArray *_cellInfos;
+}
 
 @synthesize selectedControllerIndexPath = _selectedControllerIndexPath;
 
@@ -81,12 +88,12 @@
 	_menuTableView.backgroundColor = [UIColor clearColor];
 	_menuTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 	[self.view addSubview:_menuTableView];
+	[self selectRowAtIndexPath:[NSIndexPath indexPathForRow:_selectedControllerIndexPath.row inSection:_selectedControllerIndexPath.section] animated:NO scrollPosition:UITableViewScrollPositionTop];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 	self.view.frame = CGRectMake(0.0f, 0.0f,kGHRevealSidebarWidth, CGRectGetHeight(self.view.bounds));
 	[_searchBar sizeToFit];
-	[self selectRowAtIndexPath:[NSIndexPath indexPathForRow:_selectedControllerIndexPath.row inSection:_selectedControllerIndexPath.section] animated:NO scrollPosition:UITableViewScrollPositionTop];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)orientation {
